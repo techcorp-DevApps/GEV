@@ -62,7 +62,7 @@ settled and not applicable because no Google 3D tileset is active.
 
 ## Setup
 
-- **URL:** http://localhost:4173 — auto-flies to Austin on load. Give photoreal tiles ~10s.
+- **URL:** http://localhost:4173 — auto-flies to Melbourne on load. Give photoreal tiles ~10s.
 - **Voice (the real feature):** click **GEV MIC** (bottom of screen) → wait for **LISTENING** →
   just talk. It marks the map *as it talks*, without announcing that it's drawing. Click
   **STOP** when done. (Needs `OPENAI_API_KEY`; `dev-fresh.sh` injects it from Keychain.)
@@ -126,7 +126,8 @@ cancellation, hardened Overpass + route proxies. Not much to see by hand (see §
 - ✅ Identical smooth behavior.
 
 **1e · Z-order: tracked plane stays on top (→ R13, trickiest to stage)**
-1. While tracking a plane over Austin, GEV MIC: *"annotate downtown Austin."*
+1. Say *"take me to Austin,"* select and track a plane there, then use GEV MIC:
+   *"annotate downtown Austin."*
 2. Orbit/zoom so the plane crosses the annotation's outline or label. 📸 Snap the overlap.
 - ✅ The annotation **dims** where it covers the plane/label — plane stays visible on top.
   ❌ *Was:* the annotation drew over and hid the plane.
@@ -135,7 +136,8 @@ cancellation, hardened Overpass + route proxies. Not much to see by hand (see §
 
 ## 2. Voice annotation — scoping & honesty (Batch B)
 
-> All from the Austin default view (no camera move needed). Click GEV MIC, then speak.
+> Start by saying *"take me to Austin"* and let the camera arrive before running these
+> location-sensitive checks. Then click GEV MIC and speak each prompt below.
 
 **2a · Scope: building vs region (→ R1)** — say each, watch what gets outlined:
 - *"annotate the Texas State Capitol"* → ✅ the **Capitol building**, not the whole state.
