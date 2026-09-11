@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: gods-eye-view
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 24.14.0
+      - key: HOST
+        value: 0.0.0.0
+      - key: OPENSKY_AUTH_MODE
+        value: anon

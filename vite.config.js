@@ -7737,8 +7737,19 @@ export default defineConfig(({ mode }) => {
   }
   const env = { ...process.env };
   const localAllowedHosts = ['localhost', '127.0.0.1', '.local'];
-  return {
-    plugins: [
+  // API middleware is required by both the development server and the
+  // production preview server used by Node-based hosts. A few of the older
+  // proxy plugins only declare configureServer; mirror that hook into Vite's
+  // preview lifecycle rather than silently dropping those routes in a hosted
+  // build. Provider Settings remains intentionally development-only because it
+  // writes local credential files and restarts Vite.
+  const hostedProxy = (plugin) => {
+    if (plugin.configureServer && !plugin.configurePreviewServer) {
+      return { ...plugin, configurePreviewServer: plugin.configureServer };
+    }
+    return plugin;
+  };
+  const proxyPlugins = [
       cesium(),
       openSkyProxy(),
       celestrakProxy(),
@@ -7759,8 +7770,9 @@ export default defineConfig(({ mode }) => {
       trackBackfillProxies(),
       openAiRealtimeProxy(),
       googlePlacesContextProxy(),
-      keySetupEndpoint(),
-    ],
+    ].map(hostedProxy);
+  return {
+    plugins: [...proxyPlugins, keySetupEndpoint()],
     server: {
       host: env.HOST || 'localhost',
       port: parseInt(env.PORT, 10) || 4173,
@@ -7779,6 +7791,15 @@ export default defineConfig(({ mode }) => {
       // app issue a perfectly same-origin credential write that passes every
       // Host/Origin check. These headers apply to everything this dev server
       // serves, which is what makes that attack impossible rather than unlikely.
+      headers: {
+        'X-Frame-Options': 'DENY',
+        'Content-Security-Policy': "frame-ancestors 'none'",
+      },
+    },
+    preview: {
+      host: env.HOST || '0.0.0.0',
+      port: parseInt(env.PORT, 10) || 4173,
+      allowedHosts: true,
       headers: {
         'X-Frame-Options': 'DENY',
         'Content-Security-Policy': "frame-ancestors 'none'",
